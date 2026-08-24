@@ -4,9 +4,11 @@ function App() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/api/hello')
-    .then(res => res.json())
-    .then(data => setMessage(data.message));
+    (async function fetchData() {
+      const res = await fetch('/api/hello');
+      const data = await res.json();
+      setMessage(data.message);
+    })();
   }, []);
 
   return <p>{message}</p>
