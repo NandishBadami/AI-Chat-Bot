@@ -31,7 +31,7 @@ app.post('/api/chat', async (req, res) => {
         const { prompt, conversationId } = req.body;
     
         const response = await client.interactions.create({
-            model: 'gemini-3.6-flash!',
+            model: 'gemini-3.6-flash',
             input: prompt,
             previous_interaction_id: conversations.get(conversationId)
         });
