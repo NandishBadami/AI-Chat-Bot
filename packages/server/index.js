@@ -10,7 +10,7 @@ const client = new GoogleGenAI({
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: [process.env.FRONTEND_URL]
+    origin: ["https://ai-chat-bot-client-tau.vercel.app/"]
 }));
 
 app.get('/', (req, res) => res.send("Hello World"));
