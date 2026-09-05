@@ -1,13 +1,17 @@
 import express from "express";
 import { GoogleGenAI } from '@google/genai';
 import z from 'zod';
+import cors from 'cors'
 
 const client = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY
-})
+});
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+    origin: ['http://localhost:5173']
+}));
 
 app.get('/', (req, res) => res.send("Hello World"));
 
@@ -33,14 +37,18 @@ app.post('/api/chat', async (req, res) => {
         const response = await client.interactions.create({
             model: 'gemini-3.6-flash',
             input: prompt,
+            generation_config: {
+                temperature: 0.2,
+                max_output_tokens: 500
+            },
             previous_interaction_id: conversations.get(conversationId)
         });
 
         conversations.set(conversationId, response.id);
-
+        console.log(conversations);
         res.json({message: response.output_text});
     } catch (error) {
-        res.status(500).json({error: 'Failed to generate response!'});
+        res.status(500).json({error: error.body && error.body.includes('You exceeded your current quota') ? 'Failed to generate response! Out of Tokens, Try tomorrow at this same time.': 'Failed to generate response!'});
     }
 });
 
